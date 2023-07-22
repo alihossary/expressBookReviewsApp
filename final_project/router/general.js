@@ -15,6 +15,7 @@ const doesExist = (username)=>{
   }
 }
 
+
 public_users.post("/register", (req,res) => {
   let username = req.body.username;
   let password = req.body.password;
@@ -30,30 +31,52 @@ public_users.post("/register", (req,res) => {
     }
   }
   return res.status(404).json({message: "Unable to register user."});
+
   
   //Write your code here
   
 });
 
-// Get the book list available in the shop
-public_users.get('/',function (req, res) {
+// Get the book list available in the shop using async/await
+public_users.get('/', async function (req, res) {
   //Write your code here
-  let book = JSON.stringify(books)
+  const books = await retrievbooks()
+  //let book = JSON.stringify(books)
 
-  return res.status(300).json({book});
+  return res.status(300).json({books});
   //return res.status(300).json({message: "Yet to be implemented"});
 });
+function retrievbooks(){
+  return new Promise((resolve, reject) => {
+    //simulate an asynchronous operation
+    setTimeout(()=>{resolve(books)},1000)
+  })
+}
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
- let id = req.params.isbn;
+public_users.get('/isbn/:isbn',async function (req, res) {
+  let id = req.params.isbn;
+  const book = await searchBook(id)
+  function searchBook(isbn){
+    return new Promise((resolve, reject) => {
+      setTimeout(()=>{ if (books[isbn]) {let book = books[isbn];resolve(book)}},1000)
+
+    })
+
+  }
+ //Write your code here
+ 
  console.log("id:",id)
  console.log("books[id]:",books[id])
- if(books[id])
-    res.status(300).json(books[id])
-    else 
-    res.status(404).json({error : "book does not exist!"})
+ searchBook(id)
+ .then((book)=>{
+  if(book){res.json(book);} else {res.status(404).json({error: 'book not found'})
+}
+ })
+//  if(books[id])
+//     res.status(300).json(books[id])
+//     else 
+//     res.status(404).json({error : "book does not exist!"})
   //let jbooks = JSON.parse(books);
  //console.log("books[id]",jbooks.id);
  //filtered_book =JSON.stringify( books.id);

@@ -55,21 +55,24 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   let book = books[isbn]
   if(book){
-    let review = req.body.reviews;
-    let sessionuser= req.session.authorization.username;
-    if(review){
-      console.log(sessionuser)
+    let reviewText = req.body.reviews;
+    let sessionuserName= req.session.authorization.username;
+    if(reviewText){
+      console.log(sessionuserName)
       console.log("book.reviews",book.reviews)
-      const userRevExist = book.reviews.find(element =>element.username === sessionuser)
-      console.log("user review exist log",userRevExist)
-      console.log("books reviews user names",book.reviews.sessionuser)
+      let existinReviews = book.reviews
+      const userRevExistIndex = existinReviews.findIndex(element =>element.username === sessionuserName)
+      console.log("user review exist log",userRevExistIndex)
       
-      if (userRevExist)
-      { console.log("user reviewd before") 
-         userRevExist.review = review}
+      
+      if (userRevExistIndex != -1)
+      { console.log("user reviewd before, lets update the review") 
+         existinReviews[userRevExistIndex].review = reviewText}
       else{
         console.log("user reviewed for first time on this book") 
-        book.reviews.push({sessionuser,review })
+        let newReview = {username:sessionuserName, review:reviewText}
+        existinReviews.push(newReview)
+        console.log(existinReviews)
 
       }
       //book.review.filter((r)=>{r.username===username? r.reviews= review : book.reviews.push({"review" :review, " username: ":req.session.authorization.username})})
@@ -77,11 +80,36 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       //books["reviews"]=reviewsArray;
     
     }
-    books[isbn] = book;
+    //books[isbn] = book;
     res.status(200).send(`book with the ISBN  ${isbn}  review has been updated.`)
   }
  // return res.status(300).json({message: "Yet to be implemented"});
 });
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  let book = books[isbn]
+  if(book){
+  let existinReviews = book.reviews
+  let sessionuserName =  req.session.authorization.username;
+  const userRevExistIndex = existinReviews.findIndex(element =>element.username === sessionuserName)
+  console.log("user review exist log",userRevExistIndex)
+  if (userRevExistIndex != -1)
+      { console.log("user review found, lets delete the review")
+      
+      existinReviews.splice(userRevExistIndex,1)
+      book.reviews = existinReviews
+      
+      }
+
+      res.status(200).send(`book with the ISBN  ${isbn}, all reviews from user ${sessionuserName} has been deleted.`)
+      console.log("this log to make sure if review has been deleted !",book.reviews)
+    }
+
+  }
+
+
+)
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
