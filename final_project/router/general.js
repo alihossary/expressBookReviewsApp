@@ -91,57 +91,123 @@ public_users.get('/isbn/:isbn',async function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
   const author = req.params.author;
-  console.log("autor:", author);
-  //Write your code here
+  function getByAuthor(){
   objBooks = Object.values(books)
   BooksKeys = Object.keys(books)
   console.log("obj books",objBooks)
   console.log("Books keys",BooksKeys)
 
-  matched_books = [];
+  
+    return new Promise((resolve, reject) => {
+      setTimeout(()=>{
+        matched_books = [];
+        BooksKeys.forEach(key => { if(books[key].author === author )
+        {let book = books[key]
+          matched_books.push(book)
+        }
+
+});resolve(matched_books)},1000)
+    })  }
+
+  try{
+    const Matched_books = await getByAuthor(author);
+    if (Matched_books.length > 0) {
+      return res.status(200).json(Matched_books);
+    } else {
+      return res.status(404).json({ error: 'No books found for this author' });
+    }
+  }
+  catch (error) {
+    return res.status(500).json({ error: 'Error searching by author' });
+  }
+
+  } 
+)
+
+  // console.log("autor:", author);
+  // //Write your code here 
+  // objBooks = Object.values(books)
+  // BooksKeys = Object.keys(books)
+  // console.log("obj books",objBooks)
+  // console.log("Books keys",BooksKeys)
+
+  // matched_books = [];
   
 
-  BooksKeys.forEach(key => { if(books[key].author === author )
-                                {let book = books[key]
-                                  matched_books.push(book)
-                                }
+  // BooksKeys.forEach(key => { if(books[key].author === author )
+  //                               {let book = books[key]
+  //                                 matched_books.push(book)
+  //                               }
     
-  });
-  if (matched_books.length>0){
-    res.status(200).json(matched_books)}
-    else{res.status(404).json({error:"no books found for this author"})}
-  }
+  // });
+  // if (matched_books.length>0){
+  //   res.status(200).json(matched_books)}
+  //   else{res.status(404).json({error:"no books found for this author"})}
+  // }
   //const matched_books = objBooks.filter(book => {book.author === author.toString()});
  // console.log("matched books", matched_books)
   
 
  // return res.status(300).json({message: "Yet to be implemented"});
-);
+// );
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
   const title = req.params.title;
-  console.log("autor:", title);
-  //Write your code here
-  objBooks = Object.values(books)
-  BooksKeys = Object.keys(books)
-  console.log("obj books",objBooks)
-  console.log("Books keys",BooksKeys)
+  function getByTitle(){
+    objBooks = Object.values(books)
+    BooksKeys = Object.keys(books)
+    console.log("obj books",objBooks)
+    console.log("Books keys",BooksKeys)
+  
+    
+      return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+          matched_books = [];
+          BooksKeys.forEach(key => { if(books[key].title === title )
+          {let book = books[key]
+            matched_books.push(book)
+          }
+  
+  });resolve(matched_books)},1000)
+      })  }
+  
+    try{
+      const Matched_books = await getByTitle(title);
+      if (Matched_books.length > 0) {
+        return res.status(200).json(Matched_books);
+      } else {
+        return res.status(404).json({ error: 'No books found with this title' });
+      }
+    }
+    catch (error) {
+      return res.status(500).json({ error: 'Error searching by title' });
+    }
+  
+     
 
-  matched_books = [];
+
+  // console.log("autor:", title);
+  // //Write your code here
+  // objBooks = Object.values(books)
+  // BooksKeys = Object.keys(books)
+  // console.log("obj books",objBooks)
+  // console.log("Books keys",BooksKeys)
+
+  // matched_books = [];
   
 
-  BooksKeys.forEach(key => { if(books[key].title === title )
-                                {let book = books[key]
-                                  matched_books.push(book)
-                                }
+  // BooksKeys.forEach(key => { if(books[key].title === title )
+  //                               {let book = books[key]
+  //                                 matched_books.push(book)
+  //                               }
     
-  });
-  if (matched_books.length>0){
-    res.status(200).json(matched_books)}
-    else{res.status(404).json({error:"no books found with this title"})}
+  // });
+  // if (matched_books.length>0){
+  //   res.status(200).json(matched_books)}
+  //   else{res.status(404).json({error:"no books found with this title"})}
 
 
   //Write your code here
